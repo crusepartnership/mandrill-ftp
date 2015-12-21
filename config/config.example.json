@@ -1,0 +1,18 @@
+{
+  "routes": [
+    {
+      "email": "test@ftp.luciditysoftware.com.au",
+      "destination": {
+        "host": "",
+        "username": "",
+        "password": ""
+      },
+      "rules": [
+        {
+          "subject": "",
+          "filename": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "mandrill-ftp",
+  "version": "1.0.0",
+  "description": "Enable sending email attachments to ftp",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crusepartnership/mandrill-ftp.git"
+  },
+  "keywords": [
+    "mandrill",
+    "ftp"
+  ],
+  "author": "Daniel Pigott",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crusepartnership/mandrill-ftp/issues"
+  },
+  "homepage": "https://github.com/crusepartnership/mandrill-ftp#readme",
+  "dependencies": {
+    "body-parser": "~1.8.1",
+    "express": "^4.13.3",
+    "ftp": "^0.3.10",
+    "lodash": "^3.10.1"
+  }
+}
