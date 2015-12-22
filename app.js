@@ -14,10 +14,14 @@ var log = new Logger(config);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+/**
+ * Webhook to receive mandrill events
+ */
 router.post('/', function (req, res) {
     var messages = JSON.parse(req.body.mandrill_events);
     _.each(messages, function (message) {
         var msg = message.msg;
+        log.info(util.format('Message received to %s with subject %s', msg.email, msg.subject));
         var route = _.find(config.routes, 'email', msg.email);
         if (route !== undefined) {
             var rules = _.find(route.rules, 'subject', msg.subject);
@@ -47,12 +51,14 @@ router.post('/', function (req, res) {
                 log.error(util.format("No attachments found on email to route %s", route.email));
             }
         }
-        log.info(msg.text);
     });
 
     return res.status(200).send({message: 'OK'});
 });
 
+/**
+ * Reload configuration
+ */
 router.get('/reload', function(req, res) {
     config = require(__dirname + '/config/config.json');
     return res.status(200).send({message: 'OK'});
