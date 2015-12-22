@@ -18,18 +18,30 @@ router.post('/', function (req, res) {
     var messages = JSON.parse(req.body.mandrill_events);
     _.each(messages, function (message) {
         var msg = message.msg;
-        var rules = _.find(config.rules, 'subject', msg.subject);
-        var renameFilename = false;
-        if (rules !== undefined) {
-            renameFilename = rules.filename;
-        }
         var route = _.find(config.routes, 'email', msg.email);
         if (route !== undefined) {
-            var uploader = new Uploader(route.destination, log);
-            log.info(util.format('Found route route email %s', route.email));
+            var rules = _.find(route.rules, 'subject', msg.subject);
+            var renameFilename = false;
+            if (rules !== undefined) {
+                renameFilename = rules.filename;
+            }
+            var uploader = new Uploader(route.destination);
+            log.info(util.format('Found route: email %s', route.email));
             if (msg.attachments !== undefined) {
+                var i = 0;
                 _.each(msg.attachments, function (attachment) {
-                    uploader.upload(attachment.name, attachment.content);
+                    var uploadName = attachment.name;
+                    if (renameFilename) {
+                        uploadName = (i > 0) ? util.format('%s-%s', i, renameFilename) : renameFilename;
+                    }
+                    console.log(uploadName);
+                    uploader.upload(uploadName, attachment.content)
+                        .then(function (message) {
+                            log.info(message);
+                        })
+                        .catch(function (message) {
+                            log.error(message);
+                        });
                 });
             } else {
                 log.error(util.format("No attachments found on email to route %s", route.email));
@@ -38,6 +50,11 @@ router.post('/', function (req, res) {
         log.info(msg.text);
     });
 
+    return res.status(200).send({message: 'OK'});
+});
+
+router.get('/reload', function(req, res) {
+    config = require(__dirname + '/config/config.json');
     return res.status(200).send({message: 'OK'});
 });
 
