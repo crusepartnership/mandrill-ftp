@@ -38,10 +38,13 @@ router.post('/', function (req, res) {
                     if (renameFilename) {
                         uploadName = (i > 0) ? util.format('%s-%s', i, renameFilename) : renameFilename;
                     }
-                    log.info(util.format('Uploading %s to %s://%s:%d/%s', uploadName,route.destination.protocol, route.destination.host,
-
-			route.destination.port, route.destination.path
-			));
+                    log.info(util.format('Uploading %s to %s://%s:%d/%s',
+                        uploadName,
+                        route.destination.protocol,
+                        route.destination.host,
+                        route.destination.port,
+                        route.destination.path
+                    ));
                     uploader.upload(uploadName, attachment.content)
                         .then(function (message) {
                             log.info(message);
@@ -62,7 +65,7 @@ router.post('/', function (req, res) {
 /**
  * Reload configuration
  */
-router.get('/reload', function(req, res) {
+router.get('/reload', function (req, res) {
     config = require(__dirname + '/config/config.json');
     return res.status(200).send({message: 'OK'});
 });
