@@ -11,8 +11,8 @@ var config = require(__dirname + '/config/config.json');
 var log = new Logger(config);
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: false, limit: '50mb'}));
 
 /**
  * Webhook to receive mandrill events
@@ -38,13 +38,16 @@ router.post('/', function (req, res) {
                     if (renameFilename) {
                         uploadName = (i > 0) ? util.format('%s-%s', i, renameFilename) : renameFilename;
                     }
-                    console.log(uploadName);
+                    log.info(util.format('Uploading %s to %s://%s:%d/%s', uploadName,route.destination.protocol, route.destination.host,
+
+			route.destination.port, route.destination.path
+			));
                     uploader.upload(uploadName, attachment.content)
                         .then(function (message) {
                             log.info(message);
                         })
-                        .catch(function (message) {
-                            log.error(message);
+                        .catch(function (err) {
+                            log.error(util.format('Error for route %s : %s', route.destination.host, err.message));
                         });
                 });
             } else {
@@ -70,5 +73,5 @@ var server = app.listen(3000, function () {
     var host = server.address().address;
     var port = server.address().port;
 
-    console.log('Example app listening at http://%s:%s', host, port);
+    console.log('Mandrill FTP listening at http://%s:%s', host, port);
 });
